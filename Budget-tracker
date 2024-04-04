@@ -1,0 +1,70 @@
+class BudgetTracker:
+    def _init_(self):
+        self.categories = {}
+
+    def add_category(self, category):
+        self.categories[category] = []
+
+    def add_expense(self, category, expense_name, amount):
+        if category not in self.categories:
+            print(f"Error: Category '{category}' does not exist.")
+        else:
+            self.categories[category].append({'name': expense_name, 'amount': amount})
+
+    def delete_expense(self, category, expense_index):
+        if category not in self.categories:
+            print(f"Error: Category '{category}' does not exist.")
+        elif expense_index < 0 or expense_index >= len(self.categories[category]):
+            print("Error: Invalid expense index.")
+        else:
+            del self.categories[category][expense_index]
+
+    def view_summary(self):
+        total_spent = sum(sum(item['amount'] for item in expenses) for expenses in self.categories.values())
+        print(f"Total Spent: ${total_spent}")
+
+    def view_categories(self):
+        print("Categories:")
+        for category, expenses in self.categories.items():
+            print(f"{category}: ${sum(item['amount'] for item in expenses)}")
+            for i, expense in enumerate(expenses, start=1):
+                print(f"  {i}. {expense['name']}: ${expense['amount']}")
+
+def main():
+    budget_tracker = BudgetTracker()
+
+    while True:
+        print("\nPersonal Budget Tracker")
+        print("1. Add Category")
+        print("2. Add Expense")
+        print("3. Delete Expense")
+        print("4. View Summary")
+        print("5. View Categories")
+        print("6. Exit")
+
+        choice = input("Enter your choice: ")
+
+        if choice == '1':
+            category = input("Enter category name: ")
+            budget_tracker.add_category(category)
+        elif choice == '2':
+            category = input("Enter category name: ")
+            expense_name = input("Enter expense name: ")
+            amount = float(input("Enter expense amount: "))
+            budget_tracker.add_expense(category, expense_name, amount)
+        elif choice == '3':
+            category = input("Enter category name: ")
+            expense_index = int(input("Enter index of expense to delete: "))
+            budget_tracker.delete_expense(category, expense_index - 1)  # Adjust index to 0-based
+        elif choice == '4':
+            budget_tracker.view_summary()
+        elif choice == '5':
+            budget_tracker.view_categories()
+        elif choice == '6':
+            print("Exiting...")
+            break
+        else:
+            print("Invalid choice! Please enter a valid option.")
+
+if _name_ == "_main_":
+    main()
