@@ -1,0 +1,79 @@
+class Movie:
+    def _init_(self, title, genre):
+        self.title = title
+        self.genre = genre
+
+class User:
+    def _init_(self, name):
+        self.name = name
+        self.ratings = {}
+
+    def rate_movie(self, movie, rating):
+        self.ratings[movie.title] = rating
+
+class MovieRecommendationSystem:
+    def _init_(self):
+        self.users = {}
+        self.movies = []
+
+    def add_user(self, user):
+        self.users[user.name] = user
+
+    def add_movie(self, movie):
+        self.movies.append(movie)
+
+    def recommend_movies(self, user_name):
+        user = self.users.get(user_name)
+        if not user:
+            print("User not found.")
+            return
+
+        unrated_movies = [movie for movie in self.movies if movie.title not in user.ratings]
+        if not unrated_movies:
+            print("No unrated movies available.")
+            return
+
+        recommended_movie = max(unrated_movies, key=lambda movie: self._get_similarity_score(movie.genre, user))
+        print(f"Recommended movie for {user_name}: {recommended_movie.title}")
+
+    def _get_similarity_score(self, genre, user):
+        score = 0
+        for rated_movie, rating in user.ratings.items():
+            if rated_movie.genre == genre:
+                score += rating
+        return score
+
+def main():
+    # Initialize the movie recommendation system
+    recommendation_system = MovieRecommendationSystem()
+
+    # Create some users
+    user1 = User("Alice")
+    user2 = User("Bob")
+
+    # Add users to the recommendation system
+    recommendation_system.add_user(user1)
+    recommendation_system.add_user(user2)
+
+    # Create some movies
+    movie1 = Movie("The Matrix", "Action")
+    movie2 = Movie("Titanic", "Romance")
+    movie3 = Movie("The Shawshank Redemption", "Drama")
+
+    # Add movies to the recommendation system
+    recommendation_system.add_movie(movie1)
+    recommendation_system.add_movie(movie2)
+    recommendation_system.add_movie(movie3)
+
+    # Let users rate movies
+    user1.rate_movie(movie1, 5)
+    user1.rate_movie(movie2, 4)
+    user2.rate_movie(movie2, 3)
+    user2.rate_movie(movie3, 5)
+
+    # Recommend movies to users
+    recommendation_system.recommend_movies("Alice")
+    recommendation_system.recommend_movies("Bob")
+
+if _name_ == "_main_":
+    main()
